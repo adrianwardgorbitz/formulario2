@@ -482,7 +482,6 @@
 
     <h1 class="intro-title">¿Qué tipo de <span class="highlight">líder</span> llevas dentro?</h1>
 
-    <!-- Botón actualizado sin onclick en línea -->
     <button class="btn-start" id="btn-start">DESCUBRE TU ARQUETIPO →</button>
 
     <div class="intro-tag">🧠 Test de Liderazgo · 3 min</div>
@@ -519,8 +518,8 @@
     </div>
     <div id="question-container"></div>
     <div class="nav-row">
-      <button class="btn-back" id="btn-back" onclick="goBack()">← ATRÁS</button>
-      <button class="btn-next" id="btn-next" onclick="goNext()">SIGUIENTE →</button>
+      <button class="btn-back" id="btn-back">← ATRÁS</button>
+      <button class="btn-next" id="btn-next">SIGUIENTE →</button>
     </div>
   </div>
 
@@ -538,7 +537,7 @@
         <label class="form-label" for="input-instagram">Instagram</label>
         <input class="form-input" type="text" id="input-instagram" placeholder="@tu_usuario">
       </div>
-      <button class="btn-submit" id="btn-submit" onclick="showResult()">VER MI ARQUETIPO →</button>
+      <button class="btn-submit" id="btn-submit">VER MI ARQUETIPO →</button>
       <p class="privacy-note">Sin spam. Solo tu resultado.</p>
     </div>
   </div>
@@ -676,7 +675,7 @@ const QUESTIONS = [
       { emoji: '🔧', text: 'Lo que tengo que mejorar mañana', sub: 'Siempre hay algo que optimizar', score: s(3,2,2,0,2,2,0,0,0) },
       { emoji: '🏛️', text: 'Lo que construí hoy y hacia dónde voy', sub: 'El progreso acumulado me da dirección', score: s(1,2,1,0,0,3,1,1,0) },
       { emoji: '🌍', text: 'Las personas que podría impactar con lo que hago', sub: 'El propósito es lo que me sostiene', score: s(1,2,2,2,1,2,3,0,0) },
-      { emoji: '🌀', text: 'Lo que salió mal, me cuesta soltar el pensamiento', score: s(0,0,0,0,0,0,0,3,2) }
+      { emoji: '🌀', text: 'Lo que salió mal, me cuesta soltar el pensamiento', sub: 'La mente se queda atrapada en los errores', score: s(0,0,0,0,0,0,0,3,2) }
     ]
   },
   {
@@ -704,11 +703,11 @@ const QUESTIONS = [
 let currentQ = 0;
 let answers = [];
 
-const getEl = id => document.getElementById(id);
+const $ = id => document.getElementById(id);
 
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
-  const el = document.getElementById(id);
+  const el = \$(id);
   if (el) {
     el.classList.add('active');
   }
@@ -742,17 +741,14 @@ function renderQuestion() {
   const selected = answers[currentQ];
   const isLast = currentQ === QUESTIONS.length - 1;
 
-  if (getEl('progress-count')) getEl('progress-count').textContent = `${currentQ + 1} / ${QUESTIONS.length}`;
-  if (getEl('progress-bar')) getEl('progress-bar').style.width = `${((currentQ + 1) / QUESTIONS.length) * 100}%`;
-  if (getEl('btn-back')) getEl('btn-back').style.visibility = currentQ === 0 ? 'hidden' : 'visible';
-  
-  const btnNext = getEl('btn-next');
-  if (btnNext) {
-    btnNext.textContent = isLast ? 'VER MI RESULTADO →' : 'SIGUIENTE →';
-    btnNext.classList.toggle('active', selected !== undefined);
+  if ($('progress-count'))$('progress-count').textContent = `${currentQ + 1} / ${QUESTIONS.length}`;
+  if ($('progress-bar'))$('progress-bar').style.width = `${((currentQ + 1) / QUESTIONS.length) * 100}%`;
+  if ($('btn-back'))$('btn-back').style.visibility = currentQ === 0 ? 'hidden' : 'visible';
+  if ($('btn-next')) {$('btn-next').textContent = isLast ? 'VER MI RESULTADO →' : 'SIGUIENTE →';
+    \$('btn-next').classList.toggle('active', selected !== undefined);
   }
 
-  const container = getEl('question-container');
+  const container = \$('question-container');
   if (container) {
     container.innerHTML = `
       <div class="question-num">PREGUNTA 0${currentQ + 1}</div>
@@ -782,7 +778,7 @@ function selectOption(index) {
   document.querySelectorAll('.option-card').forEach((card, i) => {
     card.classList.toggle('selected', i === index);
   });
-  if (getEl('btn-next')) getEl('btn-next').classList.add('active');
+  if ($('btn-next'))$('btn-next').classList.add('active');
 }
 
 function goNext() {
@@ -837,8 +833,8 @@ function renderCta(res) {
 }
 
 function showResult() {
-  const nameInput = getEl('input-name');
-  const instaInput = getEl('input-instagram');
+  const nameInput = \$('input-name');
+  const instaInput = \$('input-instagram');
   const name = nameInput ? nameInput.value.trim() || 'Emprendedora' : 'Emprendedora';
   const instagram = instaInput ? instaInput.value.trim() || 'No indicado' : 'No indicado';
   
@@ -857,7 +853,7 @@ function showResult() {
     }).catch(err => console.error('Error emailjs:', err));
   }
 
-  const content = getEl('result-content');
+  const content = \$('result-content');
   if (content) {
     content.innerHTML = `
       <span class="result-badge">RESULTADO OFICIAL</span>
@@ -877,35 +873,63 @@ function showResult() {
 
       ${renderCta(res)}
 
-      <button class="btn-retry" id="btn-retry" onclick="startQuiz()">← Repetir el test</button>
+      <button class="btn-retry" id="btn-retry">← Repetir el test</button>
     `;
   }
 
   showScreen('screen-result');
 
-  const btnWa = getEl('btn-whatsapp');
+  const btnWa = \$('btn-whatsapp');
   if (btnWa) {
-    btnWa.onclick = () => {
-      const msg = encodeURIComponent(`¡Hola Anastasia! Acabo de hacer tu test de liderazgo y mi arquetipo es *${res.label}* (${name} - ${instagram}). Me gustaría hablar contigo.`);
+    btnWa.addEventListener('click', () => {
+      const msg = encodeURIComponent(`Hola Anastasia, soy ${name} (${instagram}). Hice tu test de liderazgo y mi arquetipo es ${res.label}. Quiero conversar contigo.`);
       window.open(`https://wa.me/${CONFIG.whatsapp}?text=${msg}`, '_blank');
-    };
+    });
   }
 
-  const btnIg = getEl('btn-instagram');
+  const btnIg = \$('btn-instagram');
   if (btnIg) {
-    btnIg.onclick = () => {
+    btnIg.addEventListener('click', () => {
       window.open(CONFIG.instagram, '_blank');
+    });
+  }
+
+  const btnRetry = \$('btn-retry');
+  if (btnRetry) {
+    btnRetry.addEventListener('click', () => {
+      showScreen('screen-intro');
+    });
+  }
+}
+
+function initEvents() {
+  const btnStart = \$('btn-start');
+  if (btnStart) btnStart.onclick = startQuiz;
+
+  const btnNext = \$('btn-next');
+  if (btnNext) btnNext.onclick = goNext;
+
+  const btnBack = \$('btn-back');
+  if (btnBack) btnBack.onclick = goBack;
+
+  const btnSubmit = \$('btn-submit');
+  if (btnSubmit) {
+    btnSubmit.onclick = () => {
+      const nameVal = $('input-name') ?$('input-name').value.trim() : '';
+      if (!nameVal) {
+        alert('Por favor, introduce tu nombre.');
+        return;
+      }
+      showResult();
     };
   }
 }
 
-// Vinculación segura del botón de inicio mediante addEventListener
-document.addEventListener('DOMContentLoaded', () => {
-  const btnStart = document.getElementById('btn-start');
-  if (btnStart) {
-    btnStart.addEventListener('click', startQuiz);
-  }
-});
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initEvents);
+} else {
+  initEvents();
+}
 </script>
 </body>
 </html>
