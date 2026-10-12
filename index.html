@@ -482,7 +482,8 @@
 
     <h1 class="intro-title">¿Qué tipo de <span class="highlight">líder</span> llevas dentro?</h1>
 
-    <button class="btn-start" id="btn-start" onclick="startQuiz()">DESCUBRE TU ARQUETIPO →</button>
+    <!-- Botón actualizado sin onclick en línea -->
+    <button class="btn-start" id="btn-start">DESCUBRE TU ARQUETIPO →</button>
 
     <div class="intro-tag">🧠 Test de Liderazgo · 3 min</div>
 
@@ -549,7 +550,7 @@
 
 </div>
 
-  <script>
+<script>
 const CONFIG = {
   whatsapp: '34602141310',
   instagram: 'https://instagram.com/anastasia.iamachkine',
@@ -897,3 +898,14 @@ function showResult() {
     };
   }
 }
+
+// Vinculación segura del botón de inicio mediante addEventListener
+document.addEventListener('DOMContentLoaded', () => {
+  const btnStart = document.getElementById('btn-start');
+  if (btnStart) {
+    btnStart.addEventListener('click', startQuiz);
+  }
+});
+</script>
+</body>
+</html>
