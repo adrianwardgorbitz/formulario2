@@ -6,11 +6,7 @@
 <title>¿Qué tipo de líder llevas dentro? · Anastasia Iamachkine</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;800&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-<script>
-  if (window.emailjs) {
-    emailjs.init("Fj3IkXRi9NvF9LxGY");
-  }
-</script>
+<script>emailjs.init("Fj3IkXRi9NvF9LxGY");</script>
 <style>
   :root {
     --bg: #0a0a0a;
@@ -52,9 +48,9 @@
   }
 
   /* Pantallas */
-  .screen { display: none; }
-  .screen.active { display: block; animation: fadeUp 0.5s ease forwards; }
-  #screen-intro.active { display: flex; flex-direction: column; align-items: center; text-align: center; }
+  .screen { display: none; animation: fadeUp 0.5s ease forwards; }
+  .screen.active { display: block; }
+  #screen-intro.active { display: flex; }
 
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(24px); }
@@ -63,27 +59,53 @@
 
   /* Intro */
   #screen-intro {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
     padding: 60px 24px;
   }
 
-  .intro-author-box {
-    margin-bottom: 24px;
+  .intro-photo-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    margin-bottom: 40px;
   }
 
-  .intro-author-name {
+  .intro-photo { width: 160px; height: auto; border-radius: 8px; flex-shrink: 0; }
+
+  .intro-photo-text { display: flex; flex-direction: column; gap: 4px; text-align: left; }
+
+  .intro-photo-name {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 32px;
+    font-size: 28px;
     letter-spacing: 2px;
-    color: var(--text);
   }
 
-  .intro-author-role {
+  .intro-photo-role {
     font-family: 'DM Mono', monospace;
     font-size: 11px;
     letter-spacing: 3px;
     text-transform: uppercase;
     color: var(--muted);
+  }
+
+  .intro-author-box { margin-bottom: 24px; }
+
+  .intro-author-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    letter-spacing: 2px;
+  }
+
+  .intro-author-role {
     margin-top: 4px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
   }
 
   .intro-title {
@@ -402,7 +424,7 @@
 
   .result-insight-text { font-size: 15px; line-height: 1.7; color: var(--body-text); }
 
-  .result-cta { border: 1px solid var(--accent); padding: 32px; margin-bottom: 24px; text-align: center; }
+  .result-cta { border: 1px solid var(--accent); padding: 32px; margin-bottom: 24px; }
   .result-cta-title { font-family: 'Bebas Neue', sans-serif; font-size: 32px; color: var(--accent); margin-bottom: 16px; }
   .result-cta-text { font-size: 16px; line-height: 1.7; color: var(--body-text); margin-bottom: 24px; }
 
@@ -467,6 +489,8 @@
 
   @media (max-width: 480px) {
     .options-grid { grid-template-columns: 1fr; }
+    .intro-photo-wrap { flex-direction: column; text-align: center; }
+    .intro-photo-text { text-align: center; }
   }
 </style>
 </head>
@@ -477,7 +501,7 @@
   <div class="screen active" id="screen-intro">
     <div class="intro-author-box">
       <div class="intro-author-name">ANASTASIA IAMACHKINE</div>
-      <div class="intro-author-role">Mentora & Empresaria</div>
+      <div class="intro-author-role">Mentora &amp; Empresaria</div>
     </div>
 
     <h1 class="intro-title">¿Qué tipo de <span class="highlight">líder</span> llevas dentro?</h1>
@@ -550,17 +574,20 @@
 </div>
 
 <script>
+/* ============================================================
+   CONFIGURACIÓN
+   ============================================================ */
 const CONFIG = {
   whatsapp: '34602141310',
   instagram: 'https://instagram.com/anastasia.iamachkine',
   emailTo: 'anastasia.iamachkine@gmail.com',
-  emailjs: { 
-    service: 'service_vrz2bgz', 
-    template: 'template_2uh3ev2' 
-  },
-  minTotalScore: 5
+  emailjs: { service: 'service_vrz2bgz', template: 'template_2uh3ev2' },
+  minTotalScore: 5   // por debajo de este total, el resultado es "huérfano"
 };
 
+/* ============================================================
+   DATOS: ARQUETIPOS
+   ============================================================ */
 const ARCHETYPES = {
   heroe: {
     emoji: '⚔️', label: 'Héroe', title: 'EL\nHÉROE', qualifies: true, color: '#FFD600',
@@ -624,9 +651,16 @@ const ARCHETYPES = {
   }
 };
 
+// Los 9 arquetipos que se puntúan (el huérfano solo sale por puntuación mínima)
 const SCORED = ['heroe', 'gobernante', 'sabio', 'explorador', 'rebelde', 'creador', 'aliado', 'espectador', 'esceptico'];
+
+// Orden de las puntuaciones en cada opción:
+// [héroe, gobernante, sabio, explorador, rebelde, creador, aliado, espectador, escéptico]
 const s = (...v) => Object.fromEntries(SCORED.map((k, i) => [k, v[i]]));
 
+/* ============================================================
+   DATOS: PREGUNTAS
+   ============================================================ */
 const QUESTIONS = [
   {
     title: 'LLEVAS MESES HACIENDO LO MISMO.',
@@ -700,20 +734,29 @@ const QUESTIONS = [
   }
 ];
 
+/* ============================================================
+   ESTADO
+   ============================================================ */
 let currentQ = 0;
-let answers = [];
+let answers = [];   // answers[i] = índice de la opción elegida en la pregunta i
 
+/* ============================================================
+   UTILIDADES
+   ============================================================ */
 const $ = id => document.getElementById(id);
 
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
-  const el = \$(id);
-  if (el) {
-    el.classList.add('active');
-  }
+  const el = $(id);
+  el.style.animation = 'none';
+  void el.offsetHeight;          // reinicia la animación
+  el.style.animation = '';
+  el.classList.add('active');
   window.scrollTo(0, 0);
 }
 
+// La puntuación se recalcula siempre desde las respuestas.
+// Así, ir atrás y volver a avanzar nunca suma dos veces.
 function calculateScores() {
   const scores = Object.fromEntries(SCORED.map(k => [k, 0]));
   answers.forEach((optIndex, qIndex) => {
@@ -729,6 +772,9 @@ function getDominant(scores) {
   return Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
 }
 
+/* ============================================================
+   QUIZ
+   ============================================================ */
 function startQuiz() {
   currentQ = 0;
   answers = [];
@@ -741,36 +787,26 @@ function renderQuestion() {
   const selected = answers[currentQ];
   const isLast = currentQ === QUESTIONS.length - 1;
 
-  if ($('progress-count'))$('progress-count').textContent = `${currentQ + 1} / ${QUESTIONS.length}`;
-  if ($('progress-bar'))$('progress-bar').style.width = `${((currentQ + 1) / QUESTIONS.length) * 100}%`;
-  if ($('btn-back'))$('btn-back').style.visibility = currentQ === 0 ? 'hidden' : 'visible';
-  if ($('btn-next')) {$('btn-next').textContent = isLast ? 'VER MI RESULTADO →' : 'SIGUIENTE →';
-    \$('btn-next').classList.toggle('active', selected !== undefined);
-  }
+  $('progress-count').textContent = `${currentQ + 1} / ${QUESTIONS.length}`;
+  $('progress-bar').style.width = `${((currentQ + 1) / QUESTIONS.length) * 100}%`;
+  $('btn-back').style.visibility = currentQ === 0 ? 'hidden' : 'visible';
+  $('btn-next').textContent = isLast ? 'VER MI RESULTADO →' : 'SIGUIENTE →';
+  $('btn-next').classList.toggle('active', selected !== undefined);
 
-  const container = \$('question-container');
-  if (container) {
-    container.innerHTML = `
-      <div class="question-num">PREGUNTA 0${currentQ + 1}</div>
-      <h2 class="question-title">${q.title}</h2>
-      <p class="question-sub">${q.sub}</p>
-      <div class="options-grid">
-        ${q.options.map((opt, i) => `
-          <div class="option-card ${selected === i ? 'selected' : ''}" data-index="${i}">
-            <span class="option-emoji">\${opt.emoji}</span>
-            <div class="option-text">\${opt.text}</div>
-            <div class="option-sub">\${opt.sub}</div>
-          </div>
-        `).join('')}
-      </div>
-    `;
-
-    document.querySelectorAll('.option-card').forEach(card => {
-      card.addEventListener('click', () => {
-        selectOption(parseInt(card.getAttribute('data-index')));
-      });
-    });
-  }
+  $('question-container').innerHTML = `
+    <div class="question-num">PREGUNTA 0${currentQ + 1}</div>
+    <h2 class="question-title">${q.title}</h2>
+    <p class="question-sub">${q.sub}</p>
+    <div class="options-grid">
+      ${q.options.map((opt, i) => `
+        <div class="option-card ${selected === i ? 'selected' : ''}" data-index="${i}">
+          <span class="option-emoji">${opt.emoji}</span>
+          <div class="option-text">${opt.text}</div>
+          <div class="option-sub">${opt.sub}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
 }
 
 function selectOption(index) {
@@ -778,7 +814,7 @@ function selectOption(index) {
   document.querySelectorAll('.option-card').forEach((card, i) => {
     card.classList.toggle('selected', i === index);
   });
-  if ($('btn-next'))$('btn-next').classList.add('active');
+  $('btn-next').classList.add('active');
 }
 
 function goNext() {
@@ -797,6 +833,9 @@ function goBack() {
   renderQuestion();
 }
 
+/* ============================================================
+   RESULTADO
+   ============================================================ */
 function renderBars(scores) {
   const max = Math.max(...Object.values(scores)) || 1;
   const light = ['gobernante', 'explorador', 'creador'];
@@ -827,109 +866,84 @@ function renderCta(res) {
     <div class="result-cta">
       <div class="result-cta-title">Anastasia quiere conocerte</div>
       <p class="result-cta-text">"Para. Deja de scrollear. Deja de pensar. Esto es exactamente lo que buscabas y lo sabes. Escríbeme."</p>
-      <button class="btn-whatsapp" id="btn-whatsapp">📱 ESCRIBIR A ANASTASIA</button><br>
+      <button class="btn-whatsapp" id="btn-whatsapp">📱 ESCRIBIR A ANASTASIA</button>
       <button class="btn-instagram" id="btn-instagram">Prefiero escribirte por Instagram →</button>
     </div>`;
 }
 
 function showResult() {
-  const nameInput = \$('input-name');
-  const instaInput = \$('input-instagram');
-  const name = nameInput ? nameInput.value.trim() || 'Emprendedora' : 'Emprendedora';
-  const instagram = instaInput ? instaInput.value.trim() || 'No indicado' : 'No indicado';
-  
-  const scores = calculateScores();
-  const dominantKey = getDominant(scores);
-  const res = ARCHETYPES[dominantKey];
+  const name = $('input-name').value.trim();
+  const instagram = $('input-instagram').value.trim();
 
-  if (window.emailjs) {
+  const scores = calculateScores();
+  const key = getDominant(scores);
+  const res = ARCHETYPES[key];
+  const [line1, line2 = ''] = res.title.split('\n');
+  const plainTitle = res.title.replace(/\n/g, ' ');
+
+  $('result-content').innerHTML = `
+    <div class="result-badge">Tu arquetipo</div>
+    <span class="result-emoji">${res.emoji}</span>
+    <h2 class="result-title" style="color:${res.color}">${line1}<br>${line2}</h2>
+    <p class="result-subtitle">${res.subtitle}</p>
+    <p class="result-desc">${res.desc}</p>
+    <div class="score-bars">${renderBars(scores)}</div>
+    <div class="result-insight">
+      <div class="result-insight-label">🔍 Lo que esto significa para ti${name ? ', ' + name : ''}</div>
+      <p class="result-insight-text">${res.insight}</p>
+    </div>
+    ${renderCta(res)}
+    <button class="btn-retry" id="btn-retry">↺ Repetir el test</button>
+  `;
+
+  if (res.qualifies) {
+    const msg = encodeURIComponent(`Hola, acabo de hacer el test de liderazgo y me salió el arquetipo "${plainTitle}". Me gustaría saber más.`);
+    $('btn-whatsapp').addEventListener('click', () => window.open(`https://wa.me/${CONFIG.whatsapp}?text=${msg}`, '_blank'));
+    $('btn-instagram').addEventListener('click', () => window.open(CONFIG.instagram, '_blank'));
+  }
+  $('btn-retry').addEventListener('click', resetQuiz);
+
+  // Envío de lead (se omite si el nombre es "test")
+  if ((name || instagram) && name.toLowerCase() !== 'test') {
     emailjs.send(CONFIG.emailjs.service, CONFIG.emailjs.template, {
+      // Nombres originales
+      nombre: name || 'Sin nombre',
+      instagram: instagram || 'No proporcionado',
+      arquetipo: plainTitle,
+      // Nombres alternativos (por si la plantilla usa estos)
+      user_name: name || 'Sin nombre',
+      user_instagram: instagram || 'No proporcionado',
+      archetype: res.label,
       to_email: CONFIG.emailTo,
       to_name: 'Anastasia',
-      user_name: name,
-      user_instagram: instagram,
-      archetype: res.label,
       scores: JSON.stringify(scores)
-    }).catch(err => console.error('Error emailjs:', err));
-  }
-
-  const content = \$('result-content');
-  if (content) {
-    content.innerHTML = `
-      <span class="result-badge">RESULTADO OFICIAL</span>
-      <span class="result-emoji">${res.emoji}</span>
-      <h1 class="result-title">${res.title}</h1>
-      <p class="result-subtitle">${res.subtitle}</p>
-      <p class="result-desc">${res.desc}</p>
-      
-      <div class="score-bars">
-        ${renderBars(scores)}
-      </div>
-
-      <div class="result-insight">
-        <div class="result-insight-label">ANÁLISIS DE ANASTASIA IAMACHKINE</div>
-        <p class="result-insight-text">${res.insight}</p>
-      </div>
-
-      ${renderCta(res)}
-
-      <button class="btn-retry" id="btn-retry">← Repetir el test</button>
-    `;
+    }).catch(err => console.log('EmailJS error:', err));
   }
 
   showScreen('screen-result');
-
-  const btnWa = \$('btn-whatsapp');
-  if (btnWa) {
-    btnWa.addEventListener('click', () => {
-      const msg = encodeURIComponent(`Hola Anastasia, soy ${name} (${instagram}). Hice tu test de liderazgo y mi arquetipo es ${res.label}. Quiero conversar contigo.`);
-      window.open(`https://wa.me/${CONFIG.whatsapp}?text=${msg}`, '_blank');
-    });
-  }
-
-  const btnIg = \$('btn-instagram');
-  if (btnIg) {
-    btnIg.addEventListener('click', () => {
-      window.open(CONFIG.instagram, '_blank');
-    });
-  }
-
-  const btnRetry = \$('btn-retry');
-  if (btnRetry) {
-    btnRetry.addEventListener('click', () => {
-      showScreen('screen-intro');
-    });
-  }
 }
 
-function initEvents() {
-  const btnStart = \$('btn-start');
-  if (btnStart) btnStart.onclick = startQuiz;
-
-  const btnNext = \$('btn-next');
-  if (btnNext) btnNext.onclick = goNext;
-
-  const btnBack = \$('btn-back');
-  if (btnBack) btnBack.onclick = goBack;
-
-  const btnSubmit = \$('btn-submit');
-  if (btnSubmit) {
-    btnSubmit.onclick = () => {
-      const nameVal = $('input-name') ?$('input-name').value.trim() : '';
-      if (!nameVal) {
-        alert('Por favor, introduce tu nombre.');
-        return;
-      }
-      showResult();
-    };
-  }
+function resetQuiz() {
+  currentQ = 0;
+  answers = [];
+  $('input-name').value = '';
+  $('input-instagram').value = '';
+  showScreen('screen-intro');
 }
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initEvents);
-} else {
-  initEvents();
-}
+/* ============================================================
+   EVENTOS
+   ============================================================ */
+$('btn-start').addEventListener('click', startQuiz);
+$('btn-next').addEventListener('click', goNext);
+$('btn-back').addEventListener('click', goBack);
+$('btn-submit').addEventListener('click', showResult);
+
+// Delegación: las opciones se vuelven a pintar en cada pregunta
+$('question-container').addEventListener('click', e => {
+  const card = e.target.closest('.option-card');
+  if (card) selectOption(Number(card.dataset.index));
+});
 </script>
 </body>
 </html>
